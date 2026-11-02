@@ -1,0 +1,222 @@
+---
+/**
+ * Drawio
+ *
+ * @description Renders a draw.io diagram as an SVG <img>. The .drawio XML is inlined at build
+ * time; the draw.io viewer (public/drawio, from github.com/jgraph/drawio) converts it to SVG in
+ * the browser when the figure scrolls into view.
+ * @example
+ * ```mdx
+ * <Drawio src="example.drawio" alt="Request flow from browser to database" />
+ * ```
+ */
+interface Props {
+  /** File name relative to src/assets/diagrams/, e.g. "example.drawio" */
+  src?: string
+  /** Raw diagram XML, used instead of src */
+  xml?: string
+  /** Text alternative describing the diagram (required) */
+  alt: string
+  /** Optional visible caption, renders the diagram in a <figure> with <figcaption> */
+  caption?: string
+  /** Zero-based page index for multi-page files */
+  page?: number
+  /** Image background color; 'none' for transparent */
+  background?: string
+  /** Padding around the diagram in px */
+  border?: number
+  /** Render scale of the diagram */
+  scale?: number
+  /** 'lazy' renders when near the viewport, 'eager' renders on page load */
+  loading?: 'lazy' | 'eager'
+  /** Additional CSS classes */
+  class?: string
+}
+
+const diagrams = import.meta.glob<string>('/src/assets/diagrams/**/*.drawio', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
+
+const {
+  src,
+  xml: inlineXml,
+  alt,
+  caption,
+  page = 0,
+  background = '#ffffff',
+  border = 16,
+  scale = 1,
+  loading = 'lazy',
+  class: className,
+} = Astro.props
+
+const xml = inlineXml ?? (src ? diagrams[`/src/assets/diagrams/${src}`] : undefined)
+
+if (!xml) {
+  throw new Error(
+    src
+      ? `Drawio: "${src}" not found in src/assets/diagrams/. Available: ${Object.keys(diagrams).join(', ') || 'none'}`
+      : 'Drawio: pass either `src` or `xml`.',
+  )
+}
+---
+
+<figure
+  class:list={['drawio not-content', className]}
+  data-drawio
+  data-xml={xml}
+  data-page={page}
+  data-background={background}
+  data-border={border}
+  data-scale={scale}
+  data-loading={loading}
+>
+  <div class="drawio__frame">
+    <img class="drawio__img" alt={alt} hidden />
+    <p class="drawio__status" role="status">Loading diagram…</p>
+    <noscript
+      ><p class="drawio__status">Diagram: {alt} (JavaScript is required to display it)</p></noscript
+    >
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<script>
+  type Viewer = { graph: { getSvg: (...args: unknown[]) => SVGSVGElement } }
+  type GraphViewerStatic = {
+    createViewerForElement: (el: HTMLElement, cb: (viewer: Viewer) => void) => void
+  }
+
+  const VIEWER_URL = '/drawio/viewer-static.min.js'
+  let viewerPromise: Promise<GraphViewerStatic> | undefined
+
+  function loadViewer(): Promise<GraphViewerStatic> {
+    viewerPromise ??= new Promise((resolve, reject) => {
+      const existing = (window as any).GraphViewer
+      if (existing) return resolve(existing)
+      const script = document.createElement('script')
+      script.src = VIEWER_URL
+      script.async = true
+      script.onload = () => {
+        const viewer = (window as any).GraphViewer
+        viewer ? resolve(viewer) : reject(new Error('GraphViewer not defined'))
+      }
+      script.onerror = () => reject(new Error(`Failed to load ${VIEWER_URL}`))
+      document.head.append(script)
+    })
+    return viewerPromise
+  }
+
+  // Render off-screen with the official viewer, then export the graph as SVG.
+  async function toSvg(figure: HTMLElement): Promise<SVGSVGElement> {
+    const GraphViewer = await loadViewer()
+    const { xml = '', page = '0', background, border = '16', scale = '1' } = figure.dataset
+    const host = document.createElement('div')
+    host.style.cssText =
+      'position:absolute;inset-inline-start:-100000px;inset-block-start:0;visibility:hidden;'
+    host.setAttribute(
+      'data-mxgraph',
+      JSON.stringify({
+        xml,
+        page: Number(page),
+        lazy: false,
+        nav: false,
+        resize: false,
+        toolbar: '',
+        lightbox: false,
+        'dark-mode': false,
+        'check-visible-state': false,
+      }),
+    )
+    document.body.append(host)
+    try {
+      const viewer = await new Promise<Viewer>((resolve) =>
+        GraphViewer.createViewerForElement(host, resolve),
+      )
+      const bg = background === 'none' ? null : background
+      // getSvg(background, scale, border, nocrop, crisp, ignoreSelection)
+      return viewer.graph.getSvg(bg, Number(scale), Number(border), false, null, true)
+    } finally {
+      host.remove()
+    }
+  }
+
+  async function render(figure: HTMLElement) {
+    if (figure.dataset.rendered) return
+    figure.dataset.rendered = 'true'
+    const img = figure.querySelector<HTMLImageElement>('.drawio__img')!
+    const status = figure.querySelector<HTMLElement>('.drawio__status')!
+    try {
+      const svg = await toSvg(figure)
+      const width = parseFloat(svg.getAttribute('width') ?? '')
+      const height = parseFloat(svg.getAttribute('height') ?? '')
+      if (width && height) {
+        img.width = Math.ceil(width)
+        img.height = Math.ceil(height)
+      }
+      const markup = new XMLSerializer().serializeToString(svg)
+      img.src = URL.createObjectURL(new Blob([markup], { type: 'image/svg+xml' }))
+      await img.decode().catch(() => {})
+      img.hidden = false
+      status.remove()
+    } catch (error) {
+      console.error('Drawio:', error)
+      status.textContent = `Diagram could not be rendered: ${img.alt}`
+    }
+  }
+
+  function init() {
+    const figures = document.querySelectorAll<HTMLElement>('[data-drawio]:not([data-rendered])')
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          observer.unobserve(entry.target)
+          render(entry.target as HTMLElement)
+        }
+      },
+      { rootMargin: '200px 0px' },
+    )
+    figures.forEach((figure) =>
+      figure.dataset.loading === 'eager' ? render(figure) : observer.observe(figure),
+    )
+  }
+
+  init()
+</script>
+
+<style>
+  .drawio {
+    margin-block: 1.5rem;
+  }
+
+  .drawio__frame {
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    min-block-size: 6rem;
+    overflow-x: auto;
+  }
+
+  .drawio__img {
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+
+  .drawio__status {
+    margin: 0;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+  }
+
+  figcaption {
+    margin-block-start: 0.5rem;
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+    text-align: center;
+  }
+</style>

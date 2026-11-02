@@ -151,6 +151,14 @@ export default defineConfig({
               },
             },
             {
+              label: 'Drawio',
+              link: '/components/drawio',
+              badge: {
+                text: 'new',
+                variant: 'success',
+              },
+            },
+            {
               label: 'Forms',
               link: '/components/forms',
             },

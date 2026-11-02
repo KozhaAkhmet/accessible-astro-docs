@@ -1,0 +1,54 @@
+<mxfile host="drawio" version="32.5.5">
+  <diagram id="flow" name="Request flow">
+    <mxGraphModel dx="800" dy="400" grid="1" gridSize="10" page="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="browser" value="Browser" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="0" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="server" value="Astro server" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="200" y="40" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="db" value="Database" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;size=12;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="400" y="30" width="90" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="HTTP" style="endArrow=classic;html=1;" edge="1" parent="1" source="browser" target="server">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="SQL" style="endArrow=classic;html=1;" edge="1" parent="1" source="server" target="db">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="tree" name="Docs tree">
+    <mxGraphModel dx="800" dy="400" grid="1" gridSize="10" page="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="root" value="docs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="170" y="0" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="gs" value="getting-started" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="0" y="100" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cp" value="components" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="160" y="100" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ct" value="contributing" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="100" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="t1" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;html=1;" edge="1" parent="1" source="root" target="gs">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t2" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;html=1;" edge="1" parent="1" source="root" target="cp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="t3" style="edgeStyle=orthogonalEdgeStyle;endArrow=none;html=1;" edge="1" parent="1" source="root" target="ct">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -11,9 +11,26 @@
 | `GitHubStats.vue` | Client island (`client:load`); refreshes stars/forks, 5-min localStorage cache | `owner`, `repo`, `initialStars`, `initialForks` | `ProjectCard.astro` |
 | `ContentMedia.astro` | Two-column image + slot content, tilted image frame | `imgSrc`*, `reverseImg` | `WhoAreWe.astro` |
 | `WhoAreWe.astro` | Team bios (`#who-we-are`) | — | `index.mdx` |
+| `Drawio.astro` | Renders a `.drawio` file as an SVG `<img>` via the vendored draw.io viewer (see below) | `alt`*, `src` or `xml`, `caption`, `page`, `background`, `border`, `scale`, `loading`, `class` | `components/drawio.mdx` |
 | `Footer.astro` | © year footer | — | `index.mdx` |
 | `Sponsor.astro` | empty | — | — |
 | `index.js` | dead: re-exports non-existent files; never import | — | — |
+
+## Drawio (diagrams)
+```mdx
+import Drawio from '../../../components/Drawio.astro';
+
+<Drawio src="example.drawio" page={1} alt="What the diagram shows" caption="Optional" />
+```
+- Diagram files: `src/assets/diagrams/**/*.drawio`; `src` is the path relative to that folder. Unknown `src` fails the build and lists the available files.
+- `xml` takes raw `<mxfile>` / `<mxGraphModel>` XML instead of `src`.
+- `alt` is required and must describe the content. For complex diagrams, also write the key information as text.
+- `page` is zero-based. `background` defaults to `#ffffff` (readable in dark mode); `'none'` = transparent.
+- Pipeline: at build, the XML goes into `data-xml` on a `<figure>`. In the browser (lazy, IntersectionObserver, 200px margin), `/drawio/viewer-static.min.js` loads once per page. `GraphViewer.createViewerForElement` renders off-screen, `graph.getSvg(bg, scale, border, false, null, true)` exports the SVG, and the SVG goes onto the `<img>` as a blob URL with its width and height set.
+- No JS: `<noscript>` shows the alt text. Render failure: the status text changes to an error and the error is logged to the console.
+- The output is an `<img>`, so links inside the diagram are not clickable, and external images or fonts in the diagram do not load.
+- Viewer: `public/drawio/viewer-static.min.js` (~4.4 MB, Apache-2.0, from github.com/jgraph/drawio). The tag is in `public/drawio/VERSION`. Update with `npm run drawio:update -- <tag>` (`scripts/update-drawio-viewer.sh`). Do not edit the vendored file.
+- Some uncommon stencils load from `viewer.diagrams.net` (`STENCIL_PATH`); basic shapes need no network.
 
 ## Using in MDX
 Relative import from the page:

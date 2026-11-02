@@ -7,7 +7,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "drawio:update": "bash scripts/update-drawio-viewer.sh"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.40.0",

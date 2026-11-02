@@ -1,0 +1,121 @@
+---
+title: Drawio
+description: Render draw.io diagrams from .drawio files as accessible SVG images.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Drawio from '../../../components/Drawio.astro';
+
+## Introduction
+
+The Drawio component takes a `.drawio` file and renders it as an SVG `<img>`. The diagram XML is inlined at build time, and the official [draw.io viewer](https://github.com/jgraph/drawio) converts it to SVG in the browser when the diagram scrolls into view.
+
+<Aside type="note" title="Site component">
+  Drawio lives in this site's `src/components/` folder. It is not part of `accessible-astro-components`.
+</Aside>
+
+## When to use
+
+- Architecture and request-flow diagrams
+- Trees and hierarchies
+- Any diagram you maintain in the draw.io editor or the VS Code draw.io extension
+
+## Quick example
+
+<Drawio src="example.drawio" alt="Request flow: the browser sends HTTP to the Astro server, which queries the database with SQL." caption="Request flow" />
+
+## Usage
+
+### Basic
+
+Put the file in `src/assets/diagrams/`, then reference it by name:
+
+```mdx
+import Drawio from '../../../components/Drawio.astro';
+
+<Drawio src="example.drawio" alt="Request flow from browser to server to database" />
+```
+
+<Drawio src="example.drawio" alt="Request flow: the browser sends HTTP to the Astro server, which queries the database with SQL." />
+
+### Multi-page files
+
+Pages are zero-based:
+
+```mdx
+<Drawio src="example.drawio" page={1} alt="Docs tree: docs contains getting-started, components and contributing" />
+```
+
+<Drawio src="example.drawio" page={1} alt="Docs tree: docs contains getting-started, components and contributing." caption="Page 2 of example.drawio" />
+
+### Transparent background
+
+```mdx
+<Drawio src="example.drawio" background="none" alt="..." />
+```
+
+<Drawio src="example.drawio" background="none" alt="Request flow: the browser sends HTTP to the Astro server, which queries the database with SQL." caption="Transparent background" />
+
+<Aside type="caution" title="Dark mode">
+  Without a background, dark lines and text from draw.io are hard to read on the dark theme. Keep the default white background unless the diagram uses light colors.
+</Aside>
+
+### Inline XML
+
+```mdx
+export const inlineXml = `<mxGraphModel><root>
+  <mxCell id="0" /><mxCell id="1" parent="0" />
+  <mxCell id="a" value="Write" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="0" y="0" width="100" height="40" as="geometry" /></mxCell>
+  <mxCell id="b" value="Publish" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="180" y="0" width="100" height="40" as="geometry" /></mxCell>
+  <mxCell id="e" style="endArrow=classic;html=1;" edge="1" parent="1" source="a" target="b"><mxGeometry relative="1" as="geometry" /></mxCell>
+</root></mxGraphModel>`
+
+<Drawio xml={inlineXml} alt="Inline example: Write leads to Publish." />
+```
+
+export const inlineXml = `<mxGraphModel><root>
+  <mxCell id="0" /><mxCell id="1" parent="0" />
+  <mxCell id="a" value="Write" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1"><mxGeometry x="0" y="0" width="100" height="40" as="geometry" /></mxCell>
+  <mxCell id="b" value="Publish" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1"><mxGeometry x="180" y="0" width="100" height="40" as="geometry" /></mxCell>
+  <mxCell id="e" style="endArrow=classic;html=1;" edge="1" parent="1" source="a" target="b"><mxGeometry relative="1" as="geometry" /></mxCell>
+</root></mxGraphModel>`
+
+<Drawio xml={inlineXml} alt="Inline example: Write leads to Publish." />
+
+
+## Props
+
+<div class="props-wrapper">
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | — | File name relative to `src/assets/diagrams/` |
+| `xml` | `string` | — | Raw diagram XML, used instead of `src` |
+| `alt` | `string` | Required | Text alternative describing the diagram |
+| `caption` | `string` | — | Visible caption below the diagram |
+| `page` | `number` | `0` | Page index for multi-page files |
+| `background` | `string` | `'#ffffff'` | Image background; `'none'` for transparent |
+| `border` | `number` | `16` | Padding around the diagram in px |
+| `scale` | `number` | `1` | Render scale |
+| `loading` | `'lazy' \| 'eager'` | `'lazy'` | Render when near the viewport, or on page load |
+| `class` | `string` | — | Additional CSS classes |
+</div>
+
+## Accessibility
+
+- The output is an `<img>`, so `alt` is required. Describe what the diagram shows, not that it is a diagram.
+- A status message announces loading and render errors.
+- Without JavaScript, a `<noscript>` message shows the `alt` text.
+- The default white background keeps diagrams readable in dark mode.
+
+<Aside type="caution" title="Complex diagrams">
+  A short `alt` cannot carry a detailed diagram. Add the key information as text or a list near the diagram as well.
+</Aside>
+
+## How it works
+
+1. At build time, the component inlines the `.drawio` XML into a `data-xml` attribute.
+2. When the figure is near the viewport, `/drawio/viewer-static.min.js` loads once per page.
+3. The viewer renders the diagram off-screen and exports it with `graph.getSvg()`.
+4. The SVG becomes a blob URL on the `<img>`.
+
+The viewer is vendored in `public/drawio/`. Update it with `npm run drawio:update -- <tag>`.

@@ -15,6 +15,7 @@
 | Build → `dist/` | `npm run build` |
 | Preview build | `npm run preview` |
 | Format | `npx prettier --write .` |
+| Update draw.io viewer | `npm run drawio:update -- <tag>` |
 
 Verify any change with `npm run build` (must pass with no errors).
 
@@ -32,9 +33,11 @@ src/content/docs/       pages; path = URL
   getting-started/ themes/ components/ contributing/ resources/
 src/components/         site components + Starlight overrides  → components/site.md
 src/assets/             logos, images (importable)
+src/assets/diagrams/    .drawio files for <Drawio>              → components/site.md
 src/styles/custom.css   global CSS                             → styling.md
 src/utils/github.ts     getRepository() etc.
 public/                 static: favicon, profile PNGs, social image, _redirects (Netlify)
+public/drawio/          vendored draw.io viewer (do not edit; see scripts/update-drawio-viewer.sh)
 ```
 
 ## Routing
