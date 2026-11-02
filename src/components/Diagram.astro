@@ -1,13 +1,13 @@
 ---
 /**
- * Drawio
+ * Diagram
  *
- * @description Renders a draw.io diagram as an SVG <img>. The .drawio XML is inlined at build
- * time; the draw.io viewer (public/drawio, from github.com/jgraph/drawio) converts it to SVG in
- * the browser when the figure scrolls into view.
+ * @description Renders a diagram file (draw.io format) as an SVG <img>. The .drawio XML is
+ * inlined at build time; the vendored open-source viewer (public/drawio, Apache-2.0, from
+ * github.com/jgraph/drawio) converts it to SVG in the browser when the figure scrolls into view.
  * @example
  * ```mdx
- * <Drawio src="example.drawio" alt="Request flow from browser to database" />
+ * <Diagram src="example.drawio" alt="Request flow from browser to database" />
  * ```
  */
 interface Props {
@@ -57,15 +57,15 @@ const xml = inlineXml ?? (src ? diagrams[`/src/assets/diagrams/${src}`] : undefi
 if (!xml) {
   throw new Error(
     src
-      ? `Drawio: "${src}" not found in src/assets/diagrams/. Available: ${Object.keys(diagrams).join(', ') || 'none'}`
-      : 'Drawio: pass either `src` or `xml`.',
+      ? `Diagram: "${src}" not found in src/assets/diagrams/. Available: ${Object.keys(diagrams).join(', ') || 'none'}`
+      : 'Diagram: pass either `src` or `xml`.',
   )
 }
 ---
 
 <figure
-  class:list={['drawio not-content', className]}
-  data-drawio
+  class:list={['diagram not-content', className]}
+  data-diagram
   data-xml={xml}
   data-page={page}
   data-background={background}
@@ -73,11 +73,13 @@ if (!xml) {
   data-scale={scale}
   data-loading={loading}
 >
-  <div class="drawio__frame">
-    <img class="drawio__img" alt={alt} hidden />
-    <p class="drawio__status" role="status">Loading diagram…</p>
+  <div class="diagram__frame">
+    <img class="diagram__img" alt={alt} hidden />
+    <p class="diagram__status" role="status">Loading diagram…</p>
     <noscript
-      ><p class="drawio__status">Diagram: {alt} (JavaScript is required to display it)</p></noscript
+      ><p class="diagram__status">
+        Diagram: {alt} (JavaScript is required to display it)
+      </p></noscript
     >
   </div>
   {caption && <figcaption>{caption}</figcaption>}
@@ -146,8 +148,8 @@ if (!xml) {
   async function render(figure: HTMLElement) {
     if (figure.dataset.rendered) return
     figure.dataset.rendered = 'true'
-    const img = figure.querySelector<HTMLImageElement>('.drawio__img')!
-    const status = figure.querySelector<HTMLElement>('.drawio__status')!
+    const img = figure.querySelector<HTMLImageElement>('.diagram__img')!
+    const status = figure.querySelector<HTMLElement>('.diagram__status')!
     try {
       const svg = await toSvg(figure)
       const width = parseFloat(svg.getAttribute('width') ?? '')
@@ -162,13 +164,13 @@ if (!xml) {
       img.hidden = false
       status.remove()
     } catch (error) {
-      console.error('Drawio:', error)
+      console.error('Diagram:', error)
       status.textContent = `Diagram could not be rendered: ${img.alt}`
     }
   }
 
   function init() {
-    const figures = document.querySelectorAll<HTMLElement>('[data-drawio]:not([data-rendered])')
+    const figures = document.querySelectorAll<HTMLElement>('[data-diagram]:not([data-rendered])')
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -188,11 +190,11 @@ if (!xml) {
 </script>
 
 <style>
-  .drawio {
+  .diagram {
     margin-block: 1.5rem;
   }
 
-  .drawio__frame {
+  .diagram__frame {
     display: grid;
     place-items: center;
     border: 1px solid var(--sl-color-gray-5);
@@ -202,12 +204,12 @@ if (!xml) {
     overflow-x: auto;
   }
 
-  .drawio__img {
+  .diagram__img {
     max-inline-size: 100%;
     block-size: auto;
   }
 
-  .drawio__status {
+  .diagram__status {
     margin: 0;
     color: var(--sl-color-gray-2);
     font-size: var(--sl-text-sm);

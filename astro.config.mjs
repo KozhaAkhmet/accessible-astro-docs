@@ -143,16 +143,16 @@ export default defineConfig({
               },
             },
             {
-              label: 'Drawer',
-              link: '/components/drawer',
+              label: 'Diagram',
+              link: '/components/diagram',
               badge: {
                 text: 'new',
                 variant: 'success',
               },
             },
             {
-              label: 'Drawio',
-              link: '/components/drawio',
+              label: 'Drawer',
+              link: '/components/drawer',
               badge: {
                 text: 'new',
                 variant: 'success',

@@ -15,4 +15,4 @@ Read only the context files relevant to the task:
 | `context/components/starlight.md` | Starlight built-ins (Aside, Tabs, Steps, FileTree, Card…) and code blocks |
 | `context/components/icons.md` | `astro-icon` usage, installed icon sets |
 | `context/components/library.md` | `accessible-astro-components` props cheat sheet, demo pattern, toasts |
-| `context/components/site.md` | `src/components/*` (incl. `Drawio` diagrams), Starlight overrides |
+| `context/components/site.md` | `src/components/*` (incl. `Diagram`), Starlight overrides |

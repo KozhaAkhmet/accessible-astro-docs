@@ -1,17 +1,17 @@
 ---
-title: Drawio
-description: Render draw.io diagrams from .drawio files as accessible SVG images.
+title: Diagram
+description: Render diagram files in the draw.io format as accessible SVG images.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
-import Drawio from '../../../components/Drawio.astro';
+import Diagram from '../../../components/Diagram.astro';
 
 ## Introduction
 
-The Drawio component takes a `.drawio` file and renders it as an SVG `<img>`. The diagram XML is inlined at build time, and the official [draw.io viewer](https://github.com/jgraph/drawio) converts it to SVG in the browser when the diagram scrolls into view.
+The Diagram component takes a `.drawio` file and renders it as an SVG `<img>`. The diagram XML is inlined at build time, and the open-source viewer from the [jgraph/drawio](https://github.com/jgraph/drawio) repository (Apache-2.0) converts it to SVG in the browser when the diagram scrolls into view.
 
 <Aside type="note" title="Site component">
-  Drawio lives in this site's `src/components/` folder. It is not part of `accessible-astro-components`.
+  Diagram lives in this site's `src/components/` folder. It is not part of `accessible-astro-components`.
 </Aside>
 
 ## When to use
@@ -22,7 +22,7 @@ The Drawio component takes a `.drawio` file and renders it as an SVG `<img>`. Th
 
 ## Quick example
 
-<Drawio src="example.drawio" alt="Request flow: the browser sends HTTP to the Astro server, which queries the database with SQL." caption="Request flow" />
+<Diagram src="example.drawio" alt="Request flow: the browser sends HTTP to the Astro server, which queries the database with SQL." caption="Request flow" />
 
 ## Usage
 
@@ -31,30 +31,30 @@ The Drawio component takes a `.drawio` file and renders it as an SVG `<img>`. Th
 Put the file in `src/assets/diagrams/`, then reference it by name:
 
 ```mdx
-import Drawio from '../../../components/Drawio.astro';
+import Diagram from '../../../components/Diagram.astro';
 
-<Drawio src="example.drawio" alt="Request flow from browser to server to database" />
+<Diagram src="example.drawio" alt="Request flow from browser to server to database" />
 ```
 
-<Drawio src="example.drawio" alt="Request flow: the browser sends HTTP to the Astro server, which queries the database with SQL." />
+<Diagram src="example.drawio" alt="Request flow: the browser sends HTTP to the Astro server, which queries the database with SQL." />
 
 ### Multi-page files
 
 Pages are zero-based:
 
 ```mdx
-<Drawio src="example.drawio" page={1} alt="Docs tree: docs contains getting-started, components and contributing" />
+<Diagram src="example.drawio" page={1} alt="Docs tree: docs contains getting-started, components and contributing" />
 ```
 
-<Drawio src="example.drawio" page={1} alt="Docs tree: docs contains getting-started, components and contributing." caption="Page 2 of example.drawio" />
+<Diagram src="example.drawio" page={1} alt="Docs tree: docs contains getting-started, components and contributing." caption="Page 2 of example.drawio" />
 
 ### Transparent background
 
 ```mdx
-<Drawio src="example.drawio" background="none" alt="..." />
+<Diagram src="example.drawio" background="none" alt="..." />
 ```
 
-<Drawio src="example.drawio" background="none" alt="Request flow: the browser sends HTTP to the Astro server, which queries the database with SQL." caption="Transparent background" />
+<Diagram src="example.drawio" background="none" alt="Request flow: the browser sends HTTP to the Astro server, which queries the database with SQL." caption="Transparent background" />
 
 <Aside type="caution" title="Dark mode">
   Without a background, dark lines and text from draw.io are hard to read on the dark theme. Keep the default white background unless the diagram uses light colors.
@@ -70,7 +70,7 @@ export const inlineXml = `<mxGraphModel><root>
   <mxCell id="e" style="endArrow=classic;html=1;" edge="1" parent="1" source="a" target="b"><mxGeometry relative="1" as="geometry" /></mxCell>
 </root></mxGraphModel>`
 
-<Drawio xml={inlineXml} alt="Inline example: Write leads to Publish." />
+<Diagram xml={inlineXml} alt="Inline example: Write leads to Publish." />
 ```
 
 export const inlineXml = `<mxGraphModel><root>
@@ -80,7 +80,7 @@ export const inlineXml = `<mxGraphModel><root>
   <mxCell id="e" style="endArrow=classic;html=1;" edge="1" parent="1" source="a" target="b"><mxGeometry relative="1" as="geometry" /></mxCell>
 </root></mxGraphModel>`
 
-<Drawio xml={inlineXml} alt="Inline example: Write leads to Publish." />
+<Diagram xml={inlineXml} alt="Inline example: Write leads to Publish." />
 
 
 ## Props
@@ -119,3 +119,8 @@ export const inlineXml = `<mxGraphModel><root>
 4. The SVG becomes a blob URL on the `<img>`.
 
 The viewer is vendored in `public/drawio/`. Update it with `npm run drawio:update -- <tag>`.
+
+## Credits and trademark
+
+- The viewer in `public/drawio/` is © JGraph Ltd, licensed under the [Apache License 2.0](https://github.com/jgraph/drawio/blob/dev/LICENSE). Its licence text ships in `public/drawio/LICENSE`. The rest of this site is MIT-licensed.
+- draw.io is a registered trademark of JGraph Ltd. This component and site are not affiliated with, endorsed by, or sponsored by draw.io or JGraph Ltd. The name is used only to describe the file format the component reads.
