@@ -1,14 +1,14 @@
 :root {
   --gradient-primary: linear-gradient(
     160deg,
-    oklch(65% 0.2 280deg) 0%,
-    oklch(70% 0.2 260deg) 50%,
-    oklch(75% 0.2 240deg) 100%
+    var(--color-primary-400) 0%,
+    var(--color-primary-300) 50%,
+    var(--color-primary-200) 100%
   );
   --gradient-secondary: linear-gradient(
     120deg,
-    oklch(60% 0.15 300deg) 0%,
-    oklch(65% 0.15 280deg) 100%
+    var(--color-secondary-400) 0%,
+    var(--color-secondary-300) 100%
   );
 }
 

@@ -263,7 +263,7 @@ export default defineConfig({
           ],
         },
       ],
-      customCss: ['./src/styles/custom.css'],
+      customCss: ['./src/styles/palette.css', './src/styles/custom.css'],
     }),
     icon(),
     sentry({

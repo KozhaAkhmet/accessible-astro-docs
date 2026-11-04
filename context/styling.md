@@ -21,6 +21,11 @@ The left sidebar collapses into the burger menu below `60rem` (960px); Starlight
 
 At all burger widths the button is flat and sits on the left of the header; the next media query in `custom.css` sets this and reserves header space for it.
 
+## Palette
+`src/styles/palette.css` (loaded before `custom.css`) holds the colors, copied from the KozhaAkhmet.github.io site. Change the four `--brand-*` values to recolor the site; the `--color-*` ramps and `--sl-color-*` tokens are derived from them. Dark accent = secondary (gold), light accent = primary (blue). Note asides use primary and caution asides use outline (rust). Tip, danger and success keep Starlight's colors. `ProjectCard.astro` repeats the brand colors in `data-colors`.
+
+Keep light-mode link text at `--color-primary-500` or darker: `--color-primary-400` fails 4.5:1 on white.
+
 ## Custom properties
 - `--gradient-primary`, `--gradient-secondary` (defined in `custom.css`).
 - Starlight tokens (theme-aware, prefer over hard-coded colors):
