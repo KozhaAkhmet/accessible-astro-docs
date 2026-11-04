@@ -19,6 +19,8 @@ The table of contents is a "Quick access" card, styled in `custom.css` under `.r
 ## Left sidebar breakpoint
 The left sidebar collapses into the burger menu below `60rem` (960px); Starlight's default is `50rem`. Starlight hard-codes `50rem`, so the last media query in `custom.css` reproduces its mobile layout for `50rem`–`59.99rem`. To change the breakpoint, change `59.99rem` there. Between those widths the header keeps the social icons and theme switch, so they do not appear in the menu.
 
+At all burger widths the button is flat and sits on the left of the header; the next media query in `custom.css` sets this and reserves header space for it.
+
 ## Custom properties
 - `--gradient-primary`, `--gradient-secondary` (defined in `custom.css`).
 - Starlight tokens (theme-aware, prefer over hard-coded colors):
