@@ -13,6 +13,9 @@ Global CSS: `src/styles/custom.css` (registered via `customCss` in `astro.config
 | `.sr-only` | Visually hidden, screen-reader text. |
 | `.avatar .subtitle` | Spacing fix for Avatar demos. |
 
+## Content width
+`--sl-content-width` in `custom.css` sets the middle column's maximum (`56rem`; Starlight's default is `45rem`). On pages with a table of contents the column starts next to the left sidebar instead of being centered, and the header search box lines up with its left edge. `--main-pane-width` adds `3rem` of space between the column and the right sidebar, and `--quick-access-width` sets the right sidebar's minimum width. These rules replace Starlight's widths, so recheck them after a Starlight upgrade. `--__main-column-fr` is a private Starlight variable.
+
 ## Right sidebar
 The table of contents is a "Quick access" card, styled in `custom.css` under `.right-sidebar-panel`. Links get a background on hover and on the current section (`a[aria-current='true']`). The label comes from `src/content/i18n/en.json`. The top "Overview" link is hidden on desktop by CSS, and it still shows in the mobile dropdown.
 

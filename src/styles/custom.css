@@ -1,4 +1,5 @@
 :root {
+  --sl-content-width: 56rem;
   --gradient-primary: linear-gradient(
     160deg,
     var(--color-primary-400) 0%,
@@ -184,6 +185,39 @@ table td {
 /* The title link Starlight adds above the headings */
 .right-sidebar-panel starlight-toc > nav > ul > li:first-child > a {
   display: none;
+}
+
+/* Keep the search box on the content's left edge */
+@media (min-width: 60rem) {
+  :root[data-has-sidebar][data-has-toc] .header > .header {
+    --__main-column-fr: var(--sl-content-pad-x);
+  }
+}
+
+/* Start the content next to the left sidebar; Starlight centers it between the sidebars */
+@media (min-width: 72rem) {
+  :root[data-has-sidebar][data-has-toc] {
+    --quick-access-width: clamp(15rem, 20vw, var(--sl-sidebar-width));
+    --main-pane-width: min(
+      100% - var(--quick-access-width),
+      var(--sl-content-width) + 2 * var(--sl-content-pad-x) + 3rem
+    );
+  }
+
+  :root[data-has-sidebar][data-has-toc] .main-pane {
+    --sl-content-margin-inline: 0 auto;
+
+    width: var(--main-pane-width);
+  }
+
+  :root[data-has-sidebar][data-has-toc] .right-sidebar-container {
+    width: calc(100% - var(--main-pane-width));
+  }
+
+  .right-sidebar-panel .sl-container {
+    width: calc(var(--quick-access-width) - 2 * var(--sl-sidebar-pad-x));
+    max-width: none;
+  }
 }
 
 /* Collapse the left sidebar into the burger menu below 60rem (Starlight's default is 50rem) */
