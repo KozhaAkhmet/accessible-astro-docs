@@ -6,8 +6,7 @@ Global CSS: `src/styles/custom.css` (registered via `customCss` in `astro.config
 | Class / rule | Use |
 |---|---|
 | `.not-content` | Starlight: disables prose styles. Wrap every live demo. |
-| `.props-wrapper` | Wrap props tables; adds right-edge scroll fade. |
-| `table td { white-space: nowrap }` | Global; keep table cells short. |
+| `.props-wrapper` | Wrap props tables. Table cells wrap and tables fill the column from `50rem` up. A table too wide to fit scrolls inside the wrapper, so always wrap tables with long code values. |
 | `.dot-pattern` | Decorative dotted background + blurred gradient blobs on `.page`. Use with `aria-hidden="true"`. |
 | `.skip-link a` | Makes SkipLink demos render inline. |
 | `.sr-only` | Visually hidden, screen-reader text. |

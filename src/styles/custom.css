@@ -85,22 +85,8 @@ body:has(.dot-pattern) {
 }
 
 .props-wrapper {
-  position: relative;
   min-inline-size: 100%;
-}
-
-/* Add subtle fade on the right when content is scrollable */
-.props-wrapper::after {
-  content: '';
-  position: absolute;
-  inset-inline-end: 0;
-  inset-block-start: 0;
-  inline-size: 2rem;
-  block-size: 100%;
-  background: linear-gradient(to right, transparent, var(--sl-color-bg) 90%);
-  pointer-events: none;
-  opacity: 1;
-  transition: opacity 0.2s;
+  overflow-x: auto;
 }
 
 table {
@@ -108,14 +94,17 @@ table {
   min-inline-size: 100%;
 }
 
+/* Starlight's display: block lets tables scroll on phones, but stops them filling the column */
+@media (min-width: 50rem) {
+  .sl-markdown-content table:not(:where(.not-content *)) {
+    display: table;
+  }
+}
+
 table thead,
 table tbody,
 table tr {
   min-inline-size: 100%;
-}
-
-table td {
-  white-space: nowrap;
 }
 
 .skip-link a {
