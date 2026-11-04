@@ -13,6 +13,9 @@ Global CSS: `src/styles/custom.css` (registered via `customCss` in `astro.config
 | `.sr-only` | Visually hidden, screen-reader text. |
 | `.avatar .subtitle` | Spacing fix for Avatar demos. |
 
+## Right sidebar
+The table of contents is a "Quick access" card, styled in `custom.css` under `.right-sidebar-panel`. Links get a background on hover and on the current section (`a[aria-current='true']`). The label comes from `src/content/i18n/en.json`. The top "Overview" link is hidden on desktop by CSS, and it still shows in the mobile dropdown.
+
 ## Custom properties
 - `--gradient-primary`, `--gradient-secondary` (defined in `custom.css`).
 - Starlight tokens (theme-aware, prefer over hard-coded colors):

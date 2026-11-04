@@ -27,7 +27,8 @@ Verify any change with `npm run build` (must pass with no errors).
 ```
 astro.config.mjs        site config, SIDEBAR (manual), Starlight overrides, integrations
 scripts/workspace-config.js  detects npm-linked accessible-astro-components, enables reload
-src/content.config.ts   docs collection: docsLoader() + docsSchema()
+src/content.config.ts   docs + i18n collections
+src/content/i18n/en.json  Starlight UI strings ("On this page" → "Quick access")
 src/content/docs/       pages; path = URL
   index.mdx             homepage, template: splash
   getting-started/ themes/ components/ contributing/ resources/
