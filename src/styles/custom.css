@@ -185,3 +185,33 @@ table td {
 .right-sidebar-panel starlight-toc > nav > ul > li:first-child > a {
   display: none;
 }
+
+/* Collapse the left sidebar into the burger menu below 60rem (Starlight's default is 50rem) */
+@media (min-width: 50rem) and (max-width: 59.99rem) {
+  :root[data-has-sidebar] {
+    --sl-content-inline-start: 0rem;
+  }
+
+  [data-has-sidebar] .header {
+    padding-inline-end: calc(var(--sl-nav-gap) + var(--sl-nav-pad-x) + var(--sl-menu-button-size));
+  }
+
+  starlight-menu-button button {
+    display: flex;
+  }
+
+  .sidebar-pane {
+    --sl-sidebar-visibility: hidden;
+    border-inline-end: 0;
+    background-color: var(--sl-color-black);
+    width: 100%;
+  }
+
+  [aria-expanded='true'] ~ .sidebar-pane {
+    --sl-sidebar-visibility: visible;
+  }
+
+  [data-mobile-menu-expanded] {
+    overflow: hidden;
+  }
+}

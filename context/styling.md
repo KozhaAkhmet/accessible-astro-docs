@@ -16,6 +16,9 @@ Global CSS: `src/styles/custom.css` (registered via `customCss` in `astro.config
 ## Right sidebar
 The table of contents is a "Quick access" card, styled in `custom.css` under `.right-sidebar-panel`. Links get a background on hover and on the current section (`a[aria-current='true']`). The label comes from `src/content/i18n/en.json`. The top "Overview" link is hidden on desktop by CSS, and it still shows in the mobile dropdown.
 
+## Left sidebar breakpoint
+The left sidebar collapses into the burger menu below `60rem` (960px); Starlight's default is `50rem`. Starlight hard-codes `50rem`, so the last media query in `custom.css` reproduces its mobile layout for `50rem`–`59.99rem`. To change the breakpoint, change `59.99rem` there. Between those widths the header keeps the social icons and theme switch, so they do not appear in the menu.
+
 ## Custom properties
 - `--gradient-primary`, `--gradient-secondary` (defined in `custom.css`).
 - Starlight tokens (theme-aware, prefer over hard-coded colors):
