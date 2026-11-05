@@ -21,7 +21,9 @@ The table of contents is a "Quick access" card, styled in `custom.css` under `.r
 ## Left sidebar breakpoint
 The left sidebar collapses into the burger menu below `60rem` (960px); Starlight's default is `50rem`. Starlight hard-codes `50rem`, so the last media query in `custom.css` reproduces its mobile layout for `50rem`–`59.99rem`. To change the breakpoint, change `59.99rem` there. Between those widths the header keeps the social icons and theme switch, so they do not appear in the menu.
 
-At all burger widths the button is flat and sits on the left of the header; the next media query in `custom.css` sets this and reserves header space for it.
+At all burger widths the button is flat and sits on the left of the header; the next media query in `custom.css` sets this, reserves header space for it and pushes the search bar to the right.
+
+The menu opens as a drawer that slides in from the left over a backdrop. The drawer styles are in `custom.css`. The script in `src/components/PageFrame.astro` closes it on an outside click or when focus leaves it; Escape and the burger button close it through Starlight's own script.
 
 ## Palette
 `src/styles/palette.css` (loaded before `custom.css`) holds the colors, copied from the KozhaAkhmet.github.io site. Change the four `--brand-*` values to recolor the site; the `--color-*` ramps and `--sl-color-*` tokens are derived from them. Dark accent = secondary (gold), light accent = primary (blue). Note asides use primary and caution asides use outline (rust). Tip, danger and success keep Starlight's colors. `ProjectCard.astro` repeats the brand colors in `data-colors`.

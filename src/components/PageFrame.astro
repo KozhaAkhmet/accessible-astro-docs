@@ -10,3 +10,22 @@ import { ToastProvider } from 'accessible-astro-components'
 </Default>
 
 <ToastProvider position="bottom-right" />
+
+<script>
+  const menuButton = document.querySelector<HTMLButtonElement>('starlight-menu-button button')
+  const nav = menuButton?.closest('nav')
+
+  const closeMenu = () => {
+    if (document.body.hasAttribute('data-mobile-menu-expanded')) menuButton?.click()
+  }
+
+  // Close the drawer when a user clicks outside it
+  document.addEventListener('click', (e) => {
+    if (!(e.target as Element).closest('.sidebar-pane, starlight-menu-button')) closeMenu()
+  })
+
+  // Close the drawer when keyboard focus leaves it
+  nav?.addEventListener('focusout', (e) => {
+    if (e.relatedTarget instanceof Node && !nav.contains(e.relatedTarget)) closeMenu()
+  })
+</script>

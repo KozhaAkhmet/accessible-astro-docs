@@ -219,19 +219,56 @@ table tr {
     display: flex;
   }
 
+  [data-mobile-menu-expanded] {
+    overflow: hidden;
+  }
+}
+
+/* Open the burger menu as a drawer that slides in from the left */
+@media (max-width: 59.99rem) {
   .sidebar-pane {
     --sl-sidebar-visibility: hidden;
-    border-inline-end: 0;
-    background-color: var(--sl-color-black);
-    width: 100%;
+
+    transition:
+      translate 0.25s ease,
+      visibility 0.25s;
+    box-shadow: var(--sl-shadow-lg);
+    border-inline-end: 1px solid var(--sl-color-hairline-shade);
+    background-color: var(--sl-color-bg-sidebar);
+    width: min(var(--sl-sidebar-width), 85vw);
+    translate: -100%;
   }
 
   [aria-expanded='true'] ~ .sidebar-pane {
     --sl-sidebar-visibility: visible;
+
+    translate: 0;
   }
 
-  [data-mobile-menu-expanded] {
-    overflow: hidden;
+  /* The backdrop; the script in PageFrame.astro closes the drawer when it is clicked */
+  .sidebar::before {
+    position: fixed;
+    visibility: hidden;
+    opacity: 0;
+    z-index: calc(var(--sl-z-index-menu) - 1);
+    transition:
+      opacity 0.25s ease,
+      visibility 0.25s;
+    inset: var(--sl-nav-height) 0 0;
+    background-color: rgb(0 0 0 / 50%);
+    content: '';
+  }
+
+  [data-mobile-menu-expanded] .sidebar::before {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar-pane,
+    .sidebar::before {
+      transition: none;
+    }
   }
 }
 
@@ -244,6 +281,10 @@ table tr {
   [data-has-sidebar] .page > .header {
     padding-inline: calc(var(--sl-nav-pad-x) + var(--sl-menu-button-size) + 0.5rem)
       var(--sl-nav-pad-x);
+  }
+
+  [data-has-sidebar] button[data-open-modal] {
+    margin-inline-start: auto;
   }
 
   starlight-menu-button button {
