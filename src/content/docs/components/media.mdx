@@ -29,14 +29,16 @@ The Media component is perfect for situations where you need responsive images w
 ## Quick example
 
 <div class="not-content">
-  <div style="max-width: 500px;">
-    <Media 
-      src="https://images.unsplash.com/photo-1620428268482-cf1851a36764?auto=format&fit=crop&q=100&w=800"
-      alt="Example responsive image with 16:9 aspect ratio"
-      ratio="16:9"
-    />
-    <p style="margin-top: 0.5rem; font-size: 0.9rem;">This image maintains its aspect ratio across all screen sizes and loads with optimal performance.</p>
-    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: 1rem; align-items: start;">
+    <div>
+      <Media 
+        src="https://images.unsplash.com/photo-1620428268482-cf1851a36764?auto=format&fit=crop&q=100&w=800"
+        alt="Example responsive image with 16:9 aspect ratio"
+        ratio="16:9"
+      />
+      <p style="margin-top: 0.5rem; font-size: 0.9rem;">This image maintains its aspect ratio across all screen sizes and loads with optimal performance.</p>
+    </div>
+    <div style="display: flex; gap: 1rem;">
       <Media 
         src="https://images.unsplash.com/photo-1620428268482-cf1851a36764?auto=format&fit=crop&q=100&w=800"
         alt="Square format image"

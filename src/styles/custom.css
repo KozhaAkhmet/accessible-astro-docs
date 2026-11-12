@@ -1,5 +1,5 @@
 :root {
-  --sl-content-width: 56rem;
+  --sl-content-width: 62rem;
   --gradient-primary: linear-gradient(
     160deg,
     var(--color-primary-400) 0%,
@@ -107,6 +107,11 @@ table tr {
   min-inline-size: 100%;
 }
 
+/* Keep form demos at a readable width; inputs would otherwise fill the column */
+.sl-markdown-content form {
+  max-inline-size: 40rem;
+}
+
 .skip-link a {
   position: relative;
   display: inline-block;
@@ -161,8 +166,10 @@ table tr {
   color: var(--sl-color-gray-2);
 }
 
-.right-sidebar-panel a:hover {
-  background-color: var(--sl-color-hairline);
+/* Same hover as the left sidebar links */
+.right-sidebar-panel a:hover,
+.right-sidebar-panel a:focus {
+  color: var(--sl-color-white);
 }
 
 .right-sidebar-panel a[aria-current='true'] {
@@ -186,10 +193,10 @@ table tr {
 /* Start the content next to the left sidebar; Starlight centers it between the sidebars */
 @media (min-width: 72rem) {
   :root[data-has-sidebar][data-has-toc] {
-    --quick-access-width: clamp(15rem, 20vw, var(--sl-sidebar-width));
+    --quick-access-width: clamp(14rem, 16vw, var(--sl-sidebar-width));
     --main-pane-width: min(
       100% - var(--quick-access-width),
-      var(--sl-content-width) + 2 * var(--sl-content-pad-x) + 3rem
+      var(--sl-content-width) + 2 * var(--sl-content-pad-x) + 1rem
     );
   }
 
@@ -201,6 +208,10 @@ table tr {
 
   :root[data-has-sidebar][data-has-toc] .right-sidebar-container {
     width: calc(100% - var(--main-pane-width));
+  }
+
+  .right-sidebar-panel {
+    padding-inline-start: 0.5rem;
   }
 
   .right-sidebar-panel .sl-container {
@@ -300,6 +311,6 @@ table tr {
   }
 
   starlight-menu-button button:hover {
-    background-color: var(--sl-color-hairline);
+    background-color: var(--sl-color-hairline-light);
   }
 }
