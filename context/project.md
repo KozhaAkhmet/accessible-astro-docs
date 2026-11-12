@@ -36,7 +36,7 @@ src/components/         site components + Starlight overrides  → components/si
 src/assets/             logos, images (importable)
 src/assets/diagrams/    .drawio files for <Diagram>             → components/site.md
 src/styles/custom.css   global CSS                             → styling.md
-src/styles/palette.css  brand colors and Starlight color tokens → styling.md
+src/styles/palette.css  default colors; the shared style guide overrides them at runtime → styling.md
 src/utils/github.ts     getRepository() etc.
 public/                 static: favicon, profile PNGs, social image, _redirects (Netlify)
 public/drawio/          vendored diagram viewer, Apache-2.0, not MIT (do not edit; see README.md there)

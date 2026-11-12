@@ -1,0 +1,23 @@
+---
+/**
+ * Loads the shared colors and fonts from the style guide
+ * (github.com/KozhaAkhmet/style-guide) in the browser, each time a page renders.
+ *
+ * The links load without blocking the page. Until they arrive, or if the style
+ * guide cannot be reached, the defaults in `src/styles/palette.css` apply.
+ * Render this component inside <body>: it must come after the site's own
+ * stylesheets in the document so that its values win over the defaults.
+ */
+const defaultUrl = 'https://cdn.jsdelivr.net/gh/KozhaAkhmet/style-guide@main'
+const baseUrl = (import.meta.env.PUBLIC_STYLE_GUIDE_URL || defaultUrl).replace(/\/$/, '')
+const files = ['fonts.css', 'tokens.css', 'starlight.css']
+---
+
+{
+  files.map((file) => (
+    <link rel="stylesheet" href={`${baseUrl}/css/${file}`} media="print" onload="this.media='all'" />
+  ))
+}
+<noscript>
+  {files.map((file) => <link rel="stylesheet" href={`${baseUrl}/css/${file}`} />)}
+</noscript>

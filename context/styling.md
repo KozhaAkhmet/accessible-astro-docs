@@ -25,8 +25,12 @@ At all burger widths the button is flat and sits on the left of the header; the 
 
 The menu opens as a drawer that slides in from the left over a backdrop. The drawer styles are in `custom.css`. The script in `src/components/PageFrame.astro` closes it on an outside click or when focus leaves it; Escape and the burger button close it through Starlight's own script.
 
-## Palette
-`src/styles/palette.css` (loaded before `custom.css`) holds the colors, copied from the KozhaAkhmet.github.io site. Change the four `--brand-*` values to recolor the site; the `--color-*` ramps and `--sl-color-*` tokens are derived from them. Dark accent = secondary (gold), light accent = primary (blue). Note asides use primary and caution asides use outline (rust). Tip, danger and success keep Starlight's colors. `ProjectCard.astro` repeats the brand colors in `data-colors`.
+## Palette and fonts
+Colors and fonts are shared with the KozhaAkhmet.github.io site through the style guide (github.com/KozhaAkhmet/style-guide). They are fetched in the browser when a page renders, not at build time: `src/components/StyleGuide.astro` (rendered at the top of `PageFrame.astro`) adds links to the style guide's `fonts.css`, `tokens.css` and `starlight.css`. A change pushed to the style guide reaches the live site without a rebuild, after the CDN cache expires (up to 12 hours on jsDelivr). `PUBLIC_STYLE_GUIDE_URL` in `.env` overrides the base URL.
+
+Defaults: `src/styles/palette.css` (loaded before `custom.css`) holds the default colors and applies until the style guide's CSS has loaded, or permanently when it cannot be reached. It sets no font, so the default is Starlight's system font. To recolor the site, change `tokens.json` in the style guide; change the four `--brand-*` values in `palette.css` as well so the defaults match. The links must stay inside `<body>`: they have to follow the site's own stylesheets to win over the defaults. `ProjectCard.astro` repeats the brand colors in `data-colors` and does not follow the style guide.
+
+Dark accent = secondary (gold), light accent = primary (blue). Note asides use primary and caution asides use outline (rust). Tip, danger and success keep Starlight's colors.
 
 Keep light-mode link text at `--color-primary-500` or darker: `--color-primary-400` fails 4.5:1 on white.
 
