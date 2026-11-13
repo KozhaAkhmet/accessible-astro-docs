@@ -2,9 +2,14 @@
 import Default from '@astrojs/starlight/components/PageFrame.astro'
 import { ToastProvider } from 'accessible-astro-components'
 import StyleGuide from './StyleGuide.astro'
+// Dev-only: the import is dropped from production builds
+const DevFontSettings = import.meta.env.DEV
+  ? (await import('./DevFontSettings.astro')).default
+  : null
 ---
 
 <StyleGuide />
+{DevFontSettings && <DevFontSettings />}
 
 <Default>
   <slot />

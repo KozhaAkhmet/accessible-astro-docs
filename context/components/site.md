@@ -4,6 +4,7 @@
 |---|---|---|---|
 | `Head.astro` | Override of Starlight `Head`; adds OG/Twitter image meta and the `data-toast-demo` click handler | Starlight props | `astro.config.mjs` `components.Head` |
 | `PageFrame.astro` | Override of Starlight `PageFrame`; mounts global `<ToastProvider position="bottom-right" />` | — | `components.PageFrame` |
+| `DevFontSettings.astro` | Dev-only "Aa" button (bottom-left) opening a font picker: body/heading/code font, base size, weight, line height, letter spacing. Saves to localStorage (`dev-font-settings`), loads Google Fonts on demand, shows/copies the generated CSS for the style guide | — | `PageFrame.astro`, via a conditional dynamic import on `import.meta.env.DEV`, so production builds contain none of it |
 | `Mission.astro` | Homepage "Our mission" section | — | `index.mdx` |
 | `Support.astro` | Homepage "Support us" section | — | `index.mdx` |
 | `Projects.astro` | Build-time `getRepository()` calls → grid of `ProjectCard` + a "Coming soon" preview card | — | `index.mdx` |

@@ -1,0 +1,537 @@
+---
+/**
+ * Dev-only font picker and type settings. Rendered by `PageFrame.astro` only when
+ * `import.meta.env.DEV` is true, so it never reaches the production build.
+ *
+ * Settings are kept in localStorage and applied through a <style> element appended
+ * to the end of <body>, after the style guide links, so its values win. The panel
+ * shows the resulting CSS so it can be copied into the style guide.
+ */
+interface FontOption {
+  /** Option value stored in localStorage */
+  id: string
+  /** Label in the select */
+  label: string
+  /** CSS font-family value; empty = no override */
+  stack: string
+  /** Google Fonts css2 `family=` parameter, loaded on demand */
+  google?: string
+}
+
+const sans: FontOption[] = [
+  { id: 'inter', label: 'Inter', stack: "'Inter'", google: 'Inter:wght@100..900' },
+  { id: 'lexend', label: 'Lexend', stack: "'Lexend'", google: 'Lexend:wght@100..900' },
+  {
+    id: 'source-sans',
+    label: 'Source Sans 3',
+    stack: "'Source Sans 3'",
+    google: 'Source+Sans+3:wght@200..900',
+  },
+  {
+    id: 'plex-sans',
+    label: 'IBM Plex Sans',
+    stack: "'IBM Plex Sans'",
+    google: 'IBM+Plex+Sans:wght@300;400;500;600;700',
+  },
+  { id: 'open-sans', label: 'Open Sans', stack: "'Open Sans'", google: 'Open+Sans:wght@300..800' },
+  {
+    id: 'atkinson',
+    label: 'Atkinson Hyperlegible (original)',
+    stack: "'Atkinson Hyperlegible'",
+    google: 'Atkinson+Hyperlegible:wght@400;700',
+  },
+  {
+    id: 'literata',
+    label: 'Literata (serif)',
+    stack: "'Literata'",
+    google: 'Literata:wght@200..900',
+  },
+  { id: 'system-serif', label: 'System serif', stack: "Georgia, 'Times New Roman', serif" },
+]
+
+const bodyFonts: FontOption[] = [
+  { id: 'style-guide', label: 'Style guide docs font', stack: '' },
+  { id: 'system', label: 'Starlight system font', stack: 'var(--sl-font-system)' },
+  ...sans,
+  { id: 'custom', label: 'Custom (installed font)…', stack: '' },
+]
+
+const headingFonts: FontOption[] = [
+  { id: 'same', label: 'Same as body', stack: '' },
+  { id: 'system', label: 'Starlight system font', stack: 'var(--sl-font-system)' },
+  ...sans,
+]
+
+const monoFonts: FontOption[] = [
+  { id: 'default', label: 'Default', stack: '' },
+  {
+    id: 'jetbrains',
+    label: 'JetBrains Mono',
+    stack: "'JetBrains Mono'",
+    google: 'JetBrains+Mono:wght@100..800',
+  },
+  { id: 'fira-code', label: 'Fira Code', stack: "'Fira Code'", google: 'Fira+Code:wght@300..700' },
+  {
+    id: 'plex-mono',
+    label: 'IBM Plex Mono',
+    stack: "'IBM Plex Mono'",
+    google: 'IBM+Plex+Mono:wght@300;400;500;600;700',
+  },
+]
+
+const fonts = { body: bodyFonts, heading: headingFonts, mono: monoFonts }
+---
+
+<dev-font-settings data-fonts={JSON.stringify(fonts)}>
+  <button
+    class="dfs-toggle"
+    type="button"
+    popovertarget="dev-font-settings-panel"
+    aria-label="Font settings (dev only)"
+    title="Font settings (dev only)"
+  >
+    <span aria-hidden="true">Aa</span>
+  </button>
+
+  <div
+    id="dev-font-settings-panel"
+    class="dfs-panel"
+    popover
+    role="dialog"
+    aria-labelledby="dfs-title"
+  >
+    <div class="dfs-header">
+      <h2 id="dfs-title">Font settings</h2>
+      <span class="dfs-badge">dev only</span>
+    </div>
+
+    <form class="dfs-form" onsubmit="return false">
+      <label class="dfs-field">
+        <span>Body font</span>
+        <select name="body">
+          {bodyFonts.map((f) => <option value={f.id}>{f.label}</option>)}
+        </select>
+      </label>
+
+      <label class="dfs-field" data-custom hidden>
+        <span>Custom font-family</span>
+        <input name="custom" type="text" placeholder="e.g. Ubuntu, Verdana" autocomplete="off" />
+      </label>
+
+      <label class="dfs-field">
+        <span>Heading font</span>
+        <select name="heading">
+          {headingFonts.map((f) => <option value={f.id}>{f.label}</option>)}
+        </select>
+      </label>
+
+      <label class="dfs-field">
+        <span>Code font</span>
+        <select name="mono">
+          {monoFonts.map((f) => <option value={f.id}>{f.label}</option>)}
+        </select>
+      </label>
+
+      <label class="dfs-field">
+        <span>Base size <output name="sizeOut"></output></span>
+        <input name="size" type="range" min="80" max="130" step="2.5" />
+      </label>
+
+      <label class="dfs-field">
+        <span>Body weight <output name="weightOut"></output></span>
+        <input name="weight" type="range" min="200" max="700" step="50" />
+      </label>
+
+      <label class="dfs-field">
+        <span>Line height <output name="lineHeightOut"></output></span>
+        <input name="lineHeight" type="range" min="1.2" max="2.2" step="0.05" />
+      </label>
+
+      <label class="dfs-field">
+        <span>Letter spacing <output name="letterSpacingOut"></output></span>
+        <input name="letterSpacing" type="range" min="-0.03" max="0.1" step="0.005" />
+      </label>
+
+      <details class="dfs-css">
+        <summary>Generated CSS</summary>
+        <pre><code data-css /></pre>
+      </details>
+
+      <div class="dfs-actions">
+        <button type="button" data-copy>Copy CSS</button>
+        <button type="button" data-reset>Reset</button>
+        <button type="button" popovertarget="dev-font-settings-panel" popovertargetaction="hide">
+          Close
+        </button>
+      </div>
+      <p class="dfs-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</dev-font-settings>
+
+<script>
+  interface FontOption {
+    id: string
+    label: string
+    stack: string
+    google?: string
+  }
+  type Group = 'body' | 'heading' | 'mono'
+  interface Settings {
+    body: string
+    custom: string
+    heading: string
+    mono: string
+    size: number
+    weight: number
+    lineHeight: number
+    letterSpacing: number
+  }
+
+  const STORAGE_KEY = 'dev-font-settings'
+  const DEFAULTS: Settings = {
+    body: 'style-guide',
+    custom: '',
+    heading: 'same',
+    mono: 'default',
+    size: 100,
+    weight: 400,
+    lineHeight: 1.75,
+    letterSpacing: 0,
+  }
+
+  class DevFontSettings extends HTMLElement {
+    fonts!: Record<Group, FontOption[]>
+    form!: HTMLFormElement
+    styleEl!: HTMLStyleElement
+    settings: Settings = { ...DEFAULTS }
+
+    connectedCallback() {
+      this.fonts = JSON.parse(this.dataset.fonts ?? '{}')
+      this.form = this.querySelector('form')!
+      this.styleEl = document.createElement('style')
+      this.styleEl.id = 'dev-font-settings-css'
+      document.body.append(this.styleEl)
+
+      this.settings = { ...DEFAULTS, ...this.load() }
+      this.fillForm()
+      this.apply()
+
+      this.form.addEventListener('input', () => {
+        this.readForm()
+        this.apply()
+        this.save()
+      })
+      this.querySelector('[data-reset]')!.addEventListener('click', () => {
+        this.settings = { ...DEFAULTS }
+        this.fillForm()
+        this.apply()
+        this.save()
+        this.status('Reset to defaults')
+      })
+      this.querySelector('[data-copy]')!.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(this.css() || '/* No overrides */')
+          this.status('CSS copied')
+        } catch {
+          this.status('Copy failed; open "Generated CSS" and copy it by hand')
+        }
+      })
+    }
+
+    load(): Partial<Settings> {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}')
+      } catch {
+        return {}
+      }
+    }
+
+    save() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.settings))
+      } catch {
+        // Storage unavailable: settings last for this page only
+      }
+    }
+
+    field<T extends HTMLInputElement | HTMLSelectElement>(name: string) {
+      return this.form.elements.namedItem(name) as T
+    }
+
+    fillForm() {
+      const s = this.settings
+      for (const key of Object.keys(s) as (keyof Settings)[]) {
+        this.field(key).value = String(s[key])
+      }
+      this.updateOutputs()
+    }
+
+    readForm() {
+      const v = (name: keyof Settings) => this.field(name).value
+      this.settings = {
+        body: v('body'),
+        custom: v('custom'),
+        heading: v('heading'),
+        mono: v('mono'),
+        size: Number(v('size')),
+        weight: Number(v('weight')),
+        lineHeight: Number(v('lineHeight')),
+        letterSpacing: Number(v('letterSpacing')),
+      }
+      this.updateOutputs()
+    }
+
+    updateOutputs() {
+      const s = this.settings
+      const out = (name: string, text: string) => {
+        ;(this.form.elements.namedItem(name) as HTMLOutputElement).value = text
+      }
+      out('sizeOut', `${s.size}% (${(s.size * 0.16).toFixed(1)}px)`)
+      out('weightOut', String(s.weight))
+      out('lineHeightOut', s.lineHeight.toFixed(2))
+      out('letterSpacingOut', `${s.letterSpacing.toFixed(3)}em`)
+      this.querySelector<HTMLElement>('[data-custom]')!.hidden = s.body !== 'custom'
+    }
+
+    find(group: Group, id: string) {
+      return this.fonts[group].find((f) => f.id === id)
+    }
+
+    /** Font stack for a group, or '' when the option means "no override" */
+    stack(group: Group, id: string, fallback: string) {
+      if (group === 'body' && id === 'custom') {
+        const custom = this.settings.custom.trim()
+        return custom ? `${custom}, ${fallback}` : ''
+      }
+      const font = this.find(group, id)
+      if (!font?.stack) return ''
+      return font.stack.startsWith('var(') ? font.stack : `${font.stack}, ${fallback}`
+    }
+
+    loadGoogleFonts() {
+      const s = this.settings
+      const families = [
+        this.find('body', s.body),
+        this.find('heading', s.heading),
+        this.find('mono', s.mono),
+      ]
+        .map((f) => f?.google)
+        .filter((g, i, all): g is string => !!g && all.indexOf(g) === i)
+
+      document.getElementById('dev-font-settings-fonts')?.remove()
+      if (!families.length) return
+      const link = document.createElement('link')
+      link.id = 'dev-font-settings-fonts'
+      link.rel = 'stylesheet'
+      link.href = `https://fonts.googleapis.com/css2?${families.map((f) => `family=${f}`).join('&')}&display=swap`
+      document.head.append(link)
+    }
+
+    css() {
+      const s = this.settings
+      const rootVars: string[] = []
+      const body = this.stack('body', s.body, 'var(--sl-font-system)')
+      const mono = this.stack('mono', s.mono, 'var(--sl-font-system-mono)')
+      const heading = this.stack('heading', s.heading, 'var(--sl-font-system)')
+      if (body) rootVars.push(`  --sl-font: ${body};`)
+      if (mono) rootVars.push(`  --sl-font-mono: ${mono};`)
+      if (s.lineHeight !== DEFAULTS.lineHeight)
+        rootVars.push(`  --sl-line-height: ${s.lineHeight};`)
+
+      const blocks: string[] = []
+      if (rootVars.length) blocks.push(`:root,\n::backdrop {\n${rootVars.join('\n')}\n}`)
+      if (s.size !== DEFAULTS.size) blocks.push(`html {\n  font-size: ${s.size}%;\n}`)
+
+      const bodyRules: string[] = []
+      if (s.weight !== DEFAULTS.weight) bodyRules.push(`  font-weight: ${s.weight};`)
+      if (s.letterSpacing !== DEFAULTS.letterSpacing)
+        bodyRules.push(`  letter-spacing: ${s.letterSpacing}em;`)
+      if (bodyRules.length) blocks.push(`body {\n${bodyRules.join('\n')}\n}`)
+
+      if (heading) blocks.push(`:is(h1, h2, h3, h4, h5, h6) {\n  font-family: ${heading};\n}`)
+      return blocks.join('\n\n')
+    }
+
+    apply() {
+      this.loadGoogleFonts()
+      const css = this.css()
+      this.styleEl.textContent = css
+      this.querySelector('[data-css]')!.textContent = css || '/* No overrides */'
+    }
+
+    status(text: string) {
+      const el = this.querySelector('.dfs-status')!
+      el.textContent = text
+      setTimeout(() => {
+        if (el.textContent === text) el.textContent = ''
+      }, 2500)
+    }
+  }
+
+  customElements.define('dev-font-settings', DevFontSettings)
+</script>
+
+<style>
+  /* The panel keeps fixed sizes and fonts so it stays usable while settings change */
+  dev-font-settings {
+    font-family: var(--sl-font-system);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: normal;
+    line-height: 1.4;
+  }
+
+  .dfs-toggle {
+    position: fixed;
+    inset-block-end: 16px;
+    inset-inline-start: 16px;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    inline-size: 44px;
+    block-size: 44px;
+    border: 1px solid var(--sl-color-gray-4);
+    border-radius: 50%;
+    background: var(--sl-color-bg-nav);
+    color: var(--sl-color-white);
+    font: 700 16px/1 var(--sl-font-system);
+    cursor: pointer;
+    box-shadow: var(--sl-shadow-md);
+  }
+
+  .dfs-toggle:hover {
+    border-color: var(--sl-color-accent);
+  }
+
+  .dfs-toggle:focus-visible,
+  .dfs-panel :focus-visible {
+    outline: 2px solid var(--sl-color-accent);
+    outline-offset: 2px;
+  }
+
+  .dfs-panel {
+    position: fixed;
+    inset: auto auto 72px 16px;
+    margin: 0;
+    inline-size: min(340px, calc(100vw - 32px));
+    max-block-size: calc(100dvh - 96px);
+    overflow-y: auto;
+    padding: 16px;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 8px;
+    background: var(--sl-color-bg-nav);
+    color: var(--sl-color-white);
+    font: 400 14px/1.4 var(--sl-font-system);
+    letter-spacing: normal;
+    box-shadow: var(--sl-shadow-lg);
+  }
+
+  .dfs-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-block-end: 12px;
+  }
+
+  .dfs-header h2 {
+    margin: 0;
+    font: 600 16px/1.2 var(--sl-font-system);
+    color: var(--sl-color-white);
+  }
+
+  .dfs-badge {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--sl-color-accent-low);
+    color: var(--sl-color-accent-high);
+    font-size: 12px;
+  }
+
+  .dfs-form {
+    display: grid;
+    gap: 12px;
+  }
+
+  .dfs-field {
+    display: grid;
+    gap: 4px;
+  }
+
+  .dfs-field[hidden] {
+    display: none;
+  }
+
+  .dfs-field > span {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--sl-color-gray-2);
+  }
+
+  .dfs-field output {
+    color: var(--sl-color-white);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dfs-field select,
+  .dfs-field input[type='text'] {
+    inline-size: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--sl-color-gray-4);
+    border-radius: 4px;
+    background: var(--sl-color-bg);
+    color: var(--sl-color-white);
+    font: inherit;
+  }
+
+  .dfs-field input[type='range'] {
+    inline-size: 100%;
+    accent-color: var(--sl-color-accent);
+  }
+
+  .dfs-css summary {
+    cursor: pointer;
+    color: var(--sl-color-gray-2);
+  }
+
+  .dfs-css pre {
+    margin-block-start: 8px;
+    padding: 8px;
+    border-radius: 4px;
+    background: var(--sl-color-bg);
+    overflow-x: auto;
+    font: 12px/1.5 var(--sl-font-system-mono);
+    white-space: pre;
+  }
+
+  .dfs-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .dfs-actions button {
+    flex: 1;
+    min-block-size: 36px;
+    padding: 6px 10px;
+    border: 1px solid var(--sl-color-gray-4);
+    border-radius: 4px;
+    background: var(--sl-color-bg);
+    color: var(--sl-color-white);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .dfs-actions button:hover {
+    border-color: var(--sl-color-accent);
+  }
+
+  .dfs-status {
+    margin: 0;
+    min-block-size: 1.4em;
+    color: var(--sl-color-gray-2);
+    font-size: 12px;
+  }
+</style>
