@@ -36,4 +36,29 @@ const DevFontSettings = import.meta.env.DEV
   nav?.addEventListener('focusout', (e) => {
     if (e.relatedTarget instanceof Node && !nav.contains(e.relatedTarget)) closeMenu()
   })
+
+  // Highlight the last Quick access link at the end of the page. Starlight marks a link current
+  // only when its heading reaches the top of the viewport, which the last heading cannot do
+  // on tall screens. `current` is Starlight's own setter, so its scroll tracking stays in sync.
+  const tocs = document.querySelectorAll<HTMLElement & { current?: HTMLAnchorElement }>(
+    'starlight-toc, mobile-starlight-toc',
+  )
+  const atBottom = () => innerHeight + scrollY >= document.documentElement.scrollHeight - 2
+  const highlightLast = () => {
+    if (!atBottom()) return
+    tocs.forEach((toc) => {
+      const last = [...toc.querySelectorAll('a')].at(-1)
+      if (last) toc.current = last
+    })
+  }
+  addEventListener('scroll', highlightLast, { passive: true })
+  highlightLast()
+
+  // Starlight's observer can report the previous section after the last scroll event, e.g. after
+  // clicking the last link. Re-apply whenever it moves the highlight; the observer callback runs
+  // before the next paint, so the switch is never visible. Setting the same link again is a no-op.
+  const tocObserver = new MutationObserver(highlightLast)
+  tocs.forEach((toc) =>
+    tocObserver.observe(toc, { subtree: true, attributeFilter: ['aria-current'] }),
+  )
 </script>

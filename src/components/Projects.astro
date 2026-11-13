@@ -1,15 +1,37 @@
 ---
 import ProjectCard from './ProjectCard.astro'
-import { getRepository } from '../utils/github'
+import { getRepository, type GitHubRepo } from '../utils/github'
 
-const repos = await Promise.all([
-  getRepository('incluud', 'accessible-astro-starter'),
-  getRepository('incluud', 'accessible-astro-components'),
-  getRepository('incluud', 'accessible-astro-launcher'),
-  getRepository('incluud', 'accessible-astro-dashboard'),
-  getRepository('incluud', 'accessible-astro-docs'),
-  getRepository('incluud', 'color-contrast-checker'),
-])
+const owner = 'incluud'
+const names = [
+  'accessible-astro-starter',
+  'accessible-astro-components',
+  'accessible-astro-launcher',
+  'accessible-astro-dashboard',
+  'accessible-astro-docs',
+  'color-contrast-checker',
+]
+
+// A failed fetch (no GITHUB_TOKEN, rate limit, offline) must not fail the whole build.
+// GitHubStats.vue fetches the stats again in the browser, so the build only needs starting values.
+// The card keeps its title and link; the browser fills in the real star and fork counts.
+const fallbackRepo = (name: string): GitHubRepo => ({
+  name,
+  description: 'View the project on GitHub.',
+  html_url: `https://github.com/${owner}/${name}`,
+  stargazers_count: 0,
+  forks_count: 0,
+  topics: [],
+})
+
+const repos = await Promise.all(
+  names.map((name) =>
+    getRepository(owner, name).catch((error) => {
+      console.warn(`Projects: using fallback for ${owner}/${name} (${error.message})`)
+      return fallbackRepo(name)
+    }),
+  ),
+)
 ---
 
 <section class="projects">
