@@ -34,6 +34,19 @@ const sans: FontOption[] = [
     google: 'IBM+Plex+Sans:wght@300;400;500;600;700',
   },
   { id: 'open-sans', label: 'Open Sans', stack: "'Open Sans'", google: 'Open+Sans:wght@300..800' },
+  { id: 'ubuntu', label: 'Ubuntu', stack: "'Ubuntu'", google: 'Ubuntu:wght@300;400;500;700' },
+  {
+    id: 'ubuntu-sans',
+    label: 'Ubuntu Sans (variable)',
+    stack: "'Ubuntu Sans'",
+    google: 'Ubuntu+Sans:wght@100..800',
+  },
+  {
+    id: 'atkinson-next',
+    label: 'Atkinson Hyperlegible Next',
+    stack: "'Atkinson Hyperlegible Next'",
+    google: 'Atkinson+Hyperlegible+Next:wght@200..800',
+  },
   {
     id: 'atkinson',
     label: 'Atkinson Hyperlegible (original)',
@@ -60,6 +73,7 @@ const headingFonts: FontOption[] = [
   { id: 'same', label: 'Same as body', stack: '' },
   { id: 'system', label: 'Starlight system font', stack: 'var(--sl-font-system)' },
   ...sans,
+  { id: 'custom', label: 'Custom (installed font)…', stack: '' },
 ]
 
 const monoFonts: FontOption[] = [
@@ -76,6 +90,13 @@ const monoFonts: FontOption[] = [
     label: 'IBM Plex Mono',
     stack: "'IBM Plex Mono'",
     google: 'IBM+Plex+Mono:wght@300;400;500;600;700',
+  },
+  { id: 'ubuntu-mono', label: 'Ubuntu Mono', stack: "'Ubuntu Mono'", google: 'Ubuntu+Mono:wght@400;700' },
+  {
+    id: 'ubuntu-sans-mono',
+    label: 'Ubuntu Sans Mono (variable)',
+    stack: "'Ubuntu Sans Mono'",
+    google: 'Ubuntu+Sans+Mono:wght@400..700',
   },
 ]
 
@@ -106,6 +127,8 @@ const fonts = { body: bodyFonts, heading: headingFonts, mono: monoFonts }
     </div>
 
     <form class="dfs-form" onsubmit="return false">
+      <h3 class="dfs-group">Body</h3>
+
       <label class="dfs-field">
         <span>Body font</span>
         <select name="body">
@@ -113,23 +136,9 @@ const fonts = { body: bodyFonts, heading: headingFonts, mono: monoFonts }
         </select>
       </label>
 
-      <label class="dfs-field" data-custom hidden>
-        <span>Custom font-family</span>
+      <label class="dfs-field" data-custom="body" hidden>
+        <span>Custom body font-family</span>
         <input name="custom" type="text" placeholder="e.g. Ubuntu, Verdana" autocomplete="off" />
-      </label>
-
-      <label class="dfs-field">
-        <span>Heading font</span>
-        <select name="heading">
-          {headingFonts.map((f) => <option value={f.id}>{f.label}</option>)}
-        </select>
-      </label>
-
-      <label class="dfs-field">
-        <span>Code font</span>
-        <select name="mono">
-          {monoFonts.map((f) => <option value={f.id}>{f.label}</option>)}
-        </select>
       </label>
 
       <label class="dfs-field">
@@ -143,13 +152,51 @@ const fonts = { body: bodyFonts, heading: headingFonts, mono: monoFonts }
       </label>
 
       <label class="dfs-field">
-        <span>Line height <output name="lineHeightOut"></output></span>
+        <span>Body line height <output name="lineHeightOut"></output></span>
         <input name="lineHeight" type="range" min="1.2" max="2.2" step="0.05" />
       </label>
 
       <label class="dfs-field">
-        <span>Letter spacing <output name="letterSpacingOut"></output></span>
+        <span>Body letter spacing <output name="letterSpacingOut"></output></span>
         <input name="letterSpacing" type="range" min="-0.03" max="0.1" step="0.005" />
+      </label>
+
+      <h3 class="dfs-group">Headings</h3>
+
+      <label class="dfs-field">
+        <span>Heading font</span>
+        <select name="heading">
+          {headingFonts.map((f) => <option value={f.id}>{f.label}</option>)}
+        </select>
+      </label>
+
+      <label class="dfs-field" data-custom="heading" hidden>
+        <span>Custom heading font-family</span>
+        <input name="headingCustom" type="text" placeholder="e.g. Ubuntu, Georgia" autocomplete="off" />
+      </label>
+
+      <label class="dfs-field">
+        <span>Heading weight <output name="headingWeightOut"></output></span>
+        <input name="headingWeight" type="range" min="200" max="900" step="50" />
+      </label>
+
+      <label class="dfs-field">
+        <span>Heading line height <output name="headingLineHeightOut"></output></span>
+        <input name="headingLineHeight" type="range" min="1" max="1.8" step="0.05" />
+      </label>
+
+      <label class="dfs-field">
+        <span>Heading letter spacing <output name="headingLetterSpacingOut"></output></span>
+        <input name="headingLetterSpacing" type="range" min="-0.05" max="0.1" step="0.005" />
+      </label>
+
+      <h3 class="dfs-group">Code</h3>
+
+      <label class="dfs-field">
+        <span>Code font</span>
+        <select name="mono">
+          {monoFonts.map((f) => <option value={f.id}>{f.label}</option>)}
+        </select>
       </label>
 
       <details class="dfs-css">
@@ -181,6 +228,10 @@ const fonts = { body: bodyFonts, heading: headingFonts, mono: monoFonts }
     body: string
     custom: string
     heading: string
+    headingCustom: string
+    headingWeight: number
+    headingLineHeight: number
+    headingLetterSpacing: number
     mono: string
     size: number
     weight: number
@@ -193,6 +244,11 @@ const fonts = { body: bodyFonts, heading: headingFonts, mono: monoFonts }
     body: 'style-guide',
     custom: '',
     heading: 'same',
+    headingCustom: '',
+    // Starlight's own heading values
+    headingWeight: 600,
+    headingLineHeight: 1.2,
+    headingLetterSpacing: 0,
     mono: 'default',
     size: 100,
     weight: 400,
@@ -273,6 +329,10 @@ const fonts = { body: bodyFonts, heading: headingFonts, mono: monoFonts }
         body: v('body'),
         custom: v('custom'),
         heading: v('heading'),
+        headingCustom: v('headingCustom'),
+        headingWeight: Number(v('headingWeight')),
+        headingLineHeight: Number(v('headingLineHeight')),
+        headingLetterSpacing: Number(v('headingLetterSpacing')),
         mono: v('mono'),
         size: Number(v('size')),
         weight: Number(v('weight')),
@@ -291,7 +351,11 @@ const fonts = { body: bodyFonts, heading: headingFonts, mono: monoFonts }
       out('weightOut', String(s.weight))
       out('lineHeightOut', s.lineHeight.toFixed(2))
       out('letterSpacingOut', `${s.letterSpacing.toFixed(3)}em`)
-      this.querySelector<HTMLElement>('[data-custom]')!.hidden = s.body !== 'custom'
+      out('headingWeightOut', String(s.headingWeight))
+      out('headingLineHeightOut', s.headingLineHeight.toFixed(2))
+      out('headingLetterSpacingOut', `${s.headingLetterSpacing.toFixed(3)}em`)
+      this.querySelector<HTMLElement>('[data-custom="body"]')!.hidden = s.body !== 'custom'
+      this.querySelector<HTMLElement>('[data-custom="heading"]')!.hidden = s.heading !== 'custom'
     }
 
     find(group: Group, id: string) {
@@ -300,8 +364,8 @@ const fonts = { body: bodyFonts, heading: headingFonts, mono: monoFonts }
 
     /** Font stack for a group, or '' when the option means "no override" */
     stack(group: Group, id: string, fallback: string) {
-      if (group === 'body' && id === 'custom') {
-        const custom = this.settings.custom.trim()
+      if (id === 'custom' && group !== 'mono') {
+        const custom = (group === 'body' ? this.settings.custom : this.settings.headingCustom).trim()
         return custom ? `${custom}, ${fallback}` : ''
       }
       const font = this.find(group, id)
@@ -338,6 +402,8 @@ const fonts = { body: bodyFonts, heading: headingFonts, mono: monoFonts }
       if (mono) rootVars.push(`  --sl-font-mono: ${mono};`)
       if (s.lineHeight !== DEFAULTS.lineHeight)
         rootVars.push(`  --sl-line-height: ${s.lineHeight};`)
+      if (s.headingLineHeight !== DEFAULTS.headingLineHeight)
+        rootVars.push(`  --sl-line-height-headings: ${s.headingLineHeight};`)
 
       const blocks: string[] = []
       if (rootVars.length) blocks.push(`:root,\n::backdrop {\n${rootVars.join('\n')}\n}`)
@@ -349,7 +415,15 @@ const fonts = { body: bodyFonts, heading: headingFonts, mono: monoFonts }
         bodyRules.push(`  letter-spacing: ${s.letterSpacing}em;`)
       if (bodyRules.length) blocks.push(`body {\n${bodyRules.join('\n')}\n}`)
 
-      if (heading) blocks.push(`:is(h1, h2, h3, h4, h5, h6) {\n  font-family: ${heading};\n}`)
+      // `:root` lifts the selector above Starlight's own heading rules
+      const headingRules: string[] = []
+      if (heading) headingRules.push(`  font-family: ${heading};`)
+      if (s.headingWeight !== DEFAULTS.headingWeight)
+        headingRules.push(`  font-weight: ${s.headingWeight};`)
+      if (s.headingLetterSpacing !== DEFAULTS.headingLetterSpacing)
+        headingRules.push(`  letter-spacing: ${s.headingLetterSpacing}em;`)
+      if (headingRules.length)
+        blocks.push(`:root :is(h1, h2, h3, h4, h5, h6) {\n${headingRules.join('\n')}\n}`)
       return blocks.join('\n\n')
     }
 
@@ -438,7 +512,18 @@ const fonts = { body: bodyFonts, heading: headingFonts, mono: monoFonts }
   .dfs-header h2 {
     margin: 0;
     font: 600 16px/1.2 var(--sl-font-system);
+    letter-spacing: normal;
     color: var(--sl-color-white);
+  }
+
+  .dfs-form .dfs-group {
+    margin: 4px 0 0;
+    padding-block-end: 4px;
+    border-block-end: 1px solid var(--sl-color-gray-5);
+    font: 600 12px/1.2 var(--sl-font-system);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sl-color-gray-3);
   }
 
   .dfs-badge {
